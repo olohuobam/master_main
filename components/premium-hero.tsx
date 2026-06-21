@@ -328,7 +328,7 @@ function Turntable() {
     let last = performance.now();
     const tick = (now: number) => {
       if (!pausedRef.current) {
-        rotRef.current = (rotRef.current + ((now - last) / 1000) * 5.5) % 360;
+        rotRef.current = (rotRef.current + ((now - last) / 1000) * 5) % 360;
         if (stageRef.current) stageRef.current.style.transform = `rotateY(${rotRef.current}deg)`;
       }
       last = now;
@@ -342,108 +342,235 @@ function Turntable() {
     <div
       onMouseEnter={() => { pausedRef.current = true; }}
       onMouseLeave={() => { pausedRef.current = false; }}
-      style={{ position: "relative", width: "200%", height: 680, marginLeft: "-50%", perspective: 1400, perspectiveOrigin: "50% 48%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <div ref={stageRef} style={{ position: "relative", width: 280, height: 400, transformStyle: "preserve-3d", willChange: "transform" }}>
+      style={{ position: "relative", width: "190%", height: 660, marginLeft: "-45%", perspective: 1200, perspectiveOrigin: "50% 46%", display: "flex", alignItems: "center", justifyContent: "center", background: "transparent" }}>
+      <div ref={stageRef} style={{ position: "relative", width: 260, height: 380, transformStyle: "preserve-3d", willChange: "transform", background: "transparent" }}>
         {TOOLS.map((tool, i) => (
-          <div key={tool.name} style={{ position: "absolute", top: 0, left: 0, width: 280, height: 400, backfaceVisibility: "hidden", transform: `rotateY(${(360 / TOOLS.length) * i}deg) translateZ(500px)` }}>
-            <img src={tool.screenshot} alt={tool.name} style={{ width: "100%", height: "100%", objectFit: "contain", objectPosition: "center", filter: "drop-shadow(0 20px 40px rgba(0,0,0,0.3))" }} />
+          <div key={tool.name} style={{ position: "absolute", top: 0, left: 0, width: 260, height: 380, backfaceVisibility: "hidden", transform: `rotateY(${(360 / TOOLS.length) * i}deg) translateZ(480px)`, background: "transparent" }}>
+            <img src={tool.screenshot} alt={tool.name} style={{ width: "100%", height: "100%", objectFit: "contain", objectPosition: "center", display: "block", filter: "drop-shadow(0 12px 28px rgba(0,0,0,0.15))", background: "transparent" }} />
           </div>
         ))}
       </div>
-      {/* Floor shadow */}
-      <div style={{ position: "absolute", left: "50%", bottom: 80, transform: "translateX(-50%)", width: "40%", height: 50, background: "radial-gradient(ellipse at center, rgba(0,0,0,0.25) 0%, transparent 70%)", filter: "blur(14px)", pointerEvents: "none" }} />
     </div>
+  );
+}
+
+// ─── Animated counter hook ────────────────────────────────────────────────────
+function useCountUp(target: number, duration = 1800, start = false) {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    if (!start) return;
+    let startTime: number | null = null;
+    const step = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.floor(eased * target));
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, [start, target, duration]);
+  return count;
+}
+
+// ─── Floating Sniper Widget ────────────────────────────────────────────────────
+function SniperWidget() {
+  const [visible, setVisible] = useState(false);
+  const [sniperMsgIndex, setSniperMsgIndex] = useState(0);
+  const MSGS = ["5 SECOND VALUE", "SNIPE GRADED CARDS", "NO MORE OVERBIDDING", "MAKE FAST MONEY", "THE CHEAT CODE", "SNIPE ANY PLATFORM"];
+
+  useEffect(() => {
+    const t = setTimeout(() => setVisible(true), 1200);
+    return () => clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
+    const id = setInterval(() => setSniperMsgIndex(i => (i + 1) % MSGS.length), 3200);
+    return () => clearInterval(id);
+  }, []);
+
+  return (
+    <AnimatePresence>
+      {visible && (
+        <motion.a
+          href="#sniper"
+          initial={{ opacity: 0, x: 80, scale: 0.85 }}
+          animate={{ opacity: 1, x: 0, scale: 1 }}
+          exit={{ opacity: 0, x: 80 }}
+          transition={{ type: "spring", stiffness: 200, damping: 22, delay: 0 }}
+          style={{
+            position: "fixed", right: 20, top: "50%", transform: "translateY(-50%)",
+            zIndex: 200, textDecoration: "none",
+            width: 118, height: 118, borderRadius: 20,
+            background: "linear-gradient(135deg, #18181B 0%, #27272A 55%, #18181B 100%)",
+            border: "3px solid white",
+            display: "flex", flexDirection: "column", alignItems: "center",
+            justifyContent: "center", padding: "12px 8px 8px",
+            textAlign: "center", color: "white", overflow: "hidden",
+            cursor: "pointer",
+          }}
+          whileHover={{ scale: 1.08 }}
+        >
+          {/* Pulse glow */}
+          <motion.div
+            animate={{ boxShadow: ["0 0 0 0 rgba(245,158,11,0.6)", "0 0 0 16px rgba(245,158,11,0)", "0 0 0 0 rgba(245,158,11,0)"] }}
+            transition={{ duration: 2.2, repeat: Infinity, ease: "easeOut" }}
+            style={{ position: "absolute", inset: 0, borderRadius: 17 }}
+          />
+          {/* Shine sweep */}
+          <motion.div
+            animate={{ x: ["-150%", "150%"] }}
+            transition={{ duration: 2.8, repeat: Infinity, ease: "linear", repeatDelay: 1.2 }}
+            style={{ position: "absolute", top: 0, bottom: 0, width: "60%", background: "linear-gradient(90deg, transparent, rgba(245,158,11,0.18), transparent)", pointerEvents: "none" }}
+          />
+          {/* NOW FEATURING badge */}
+          <span style={{ position: "absolute", top: -8, left: "50%", transform: "translateX(-50%)", display: "inline-flex", alignItems: "center", gap: 3, padding: "2px 7px", background: "linear-gradient(135deg, #10B981, #059669)", borderRadius: 100, fontFamily: "'Geist', sans-serif", fontSize: 6.5, fontWeight: 700, letterSpacing: "0.14em", color: "white", whiteSpace: "nowrap", border: "1.5px solid white", zIndex: 3 }}>
+            <motion.span animate={{ opacity: [1, 0.2, 1] }} transition={{ duration: 1.4, repeat: Infinity }}
+              style={{ width: 3.5, height: 3.5, borderRadius: "50%", background: "white", display: "inline-block" }} />
+            NOW FEATURING
+          </span>
+          {/* Title */}
+          <span style={{ position: "relative", fontFamily: "'Bebas Neue', Impact, sans-serif", fontSize: 18, lineHeight: 1, letterSpacing: "0.03em", color: "#F59E0B", textShadow: "0 1px 3px rgba(0,0,0,0.7)", zIndex: 2, marginTop: 4 }}>
+            VIDEO STREAM<br />SNIPING TOOL
+          </span>
+          {/* Rotating message */}
+          <AnimatePresence mode="wait">
+            <motion.span key={sniperMsgIndex}
+              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.4 }}
+              style={{ position: "absolute", bottom: 8, left: "50%", transform: "translateX(-50%)", fontFamily: "'Bebas Neue', Impact, sans-serif", fontSize: 9.5, letterSpacing: "0.05em", color: "#10B981", textShadow: "0 0 8px rgba(16,185,129,0.8)", whiteSpace: "nowrap", zIndex: 3 }}>
+              {MSGS[sniperMsgIndex]}
+            </motion.span>
+          </AnimatePresence>
+          {/* Arrow */}
+          <span style={{ position: "absolute", bottom: 20, right: 8, fontFamily: "'Bebas Neue', Impact, sans-serif", fontSize: 11, color: "rgba(255,255,255,0.3)" }}>↓</span>
+        </motion.a>
+      )}
+    </AnimatePresence>
   );
 }
 
 // ─── SECTION 1: Hero ──────────────────────────────────────────────────────────
 function HeroSection() {
   const ref = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
-  const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+  const [statsVisible, setStatsVisible] = useState(false);
+  const statsRef = useRef<HTMLDivElement>(null);
 
-  const stagger = {
-    hidden: {},
-    visible: { transition: { staggerChildren: 0.07, delayChildren: 0.15 } },
-  };
-  const line = { hidden: { opacity: 0, y: 50 }, visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: EASE } } };
+  // Animated counters
+  const count14M = useCountUp(14, 1600, statsVisible);
+  const count50K = useCountUp(50, 1400, statsVisible);
+  const count13 = useCountUp(13, 1000, statsVisible);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) { setStatsVisible(true); observer.disconnect(); }
+    }, { threshold: 0.3 });
+    if (statsRef.current) observer.observe(statsRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  const stagger = { hidden: {}, visible: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } } };
+  const flyUp = { hidden: { opacity: 0, y: 48 }, visible: { opacity: 1, y: 0, transition: { duration: 0.75, ease: EASE } } };
 
   return (
-    <section ref={ref} style={{ position: "relative", minHeight: "100vh", background: "#FAFAFA", overflow: "hidden" }}>
-      {/* Parallax ambient */}
-      <motion.div style={{ y: bgY, position: "absolute", inset: 0, pointerEvents: "none" }}>
-        <div style={{ position: "absolute", top: -200, right: -200, width: 700, height: 700, borderRadius: "50%", background: "radial-gradient(circle, rgba(16,185,129,0.06) 0%, transparent 65%)" }} />
-        <div style={{ position: "absolute", top: 100, left: -100, width: 500, height: 500, borderRadius: "50%", background: "radial-gradient(circle, rgba(124,58,237,0.05) 0%, transparent 65%)" }} />
-      </motion.div>
+    <section ref={ref} style={{ position: "relative", minHeight: "100vh", background: "white", overflow: "hidden" }}>
+      {/* Very subtle ambient — no coloured blobs, just clean white */}
+      <div aria-hidden style={{ position: "absolute", top: 0, right: 0, width: "55%", height: "100%", background: "linear-gradient(135deg, rgba(245,158,11,0.028) 0%, rgba(16,185,129,0.022) 100%)", pointerEvents: "none" }} />
+      {/* Faint dot grid on right */}
+      <div aria-hidden style={{ position: "absolute", top: 0, right: 0, width: "55%", height: "100%", backgroundImage: "radial-gradient(circle, rgba(0,0,0,0.055) 1px, transparent 1px)", backgroundSize: "28px 28px", pointerEvents: "none", opacity: 0.6 }} />
 
-      <motion.div className="cv-hero-inner" style={{ opacity, width: "100%", padding: "72px 7% 80px", position: "relative", zIndex: 2 }}>
-        <div className="cv-hero-grid" style={{ display: "grid", gridTemplateColumns: "minmax(0, 0.9fr) minmax(0, 1.4fr)", gap: "clamp(32px,4vw,72px)", alignItems: "start", minHeight: 680 }}>
+      <div className="cv-hero-inner" style={{ width: "100%", padding: "64px 6% 72px", position: "relative", zIndex: 2 }}>
+        <div className="cv-hero-grid" style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1.35fr)", gap: "clamp(24px,3.5vw,60px)", alignItems: "center", minHeight: "86vh" }}>
 
           {/* LEFT */}
-          <motion.div variants={stagger} initial="hidden" animate="visible" style={{ paddingTop: 48, paddingRight: 16 }}>
+          <motion.div variants={stagger} initial="hidden" animate="visible" style={{ paddingTop: 16 }}>
+
             {/* Eyebrow pill */}
-            <motion.div variants={line} style={{ marginBottom: 20 }}>
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "white", border: "1px solid rgba(10,10,11,0.1)", borderRadius: 100, padding: "6px 16px", fontFamily: "'Geist Mono', monospace", fontSize: 10, fontWeight: 700, letterSpacing: "0.16em", color: "#10B981", boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
+            <motion.div variants={flyUp} style={{ marginBottom: 22 }}>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "#F0FDF4", border: "1px solid #BBF7D0", borderRadius: 100, padding: "7px 18px", fontFamily: "'Geist Mono', monospace", fontSize: 10, fontWeight: 700, letterSpacing: "0.16em", color: "#059669" }}>
                 <motion.span animate={{ opacity: [1, 0.2, 1] }} transition={{ duration: 1.4, repeat: Infinity }}
-                  style={{ width: 6, height: 6, borderRadius: "50%", background: "#10B981", display: "inline-block" }} />
-                THE #1 CARD VALUE PLATFORM
+                  style={{ width: 6, height: 6, borderRadius: "50%", background: "#10B981", display: "inline-block", boxShadow: "0 0 6px rgba(16,185,129,0.7)" }} />
+                THE #1 CARD COLLECTING PLATFORM
               </span>
             </motion.div>
 
-            {/* H1 */}
-            <h1 style={{ fontFamily: "'Bebas Neue', Impact, sans-serif", fontSize: "clamp(3.6rem,7.2vw,6.8rem)", lineHeight: 0.87, letterSpacing: "-0.015em", color: "#0A0A0B", margin: "0 0 28px" }}>
+            {/* H1 — new copy, tighter size so it doesn't overflow */}
+            <h1 style={{ fontFamily: "'Bebas Neue', Impact, sans-serif", fontSize: "clamp(3rem,5.8vw,5.6rem)", lineHeight: 0.9, letterSpacing: "-0.01em", color: "#0A0A0B", margin: "0 0 20px" }}>
               {[
-                { text: "THE ALL-IN-ONE", outlined: false },
-                { text: "CARD VALUE", outlined: false },
-                { text: "PLATFORM", outlined: false },
-                { text: "THAT ACTUALLY", outlined: false },
-                { text: "WORKS.", outlined: true },
+                { text: "SCAN. VALUE.", outlined: false },
+                { text: "SELL. PROFIT.", outlined: false },
+                { text: "THE ONLY APP", outlined: false },
+                { text: "YOUR CARD", outlined: false },
+                { text: "BUSINESS NEEDS.", outlined: true },
               ].map(({ text, outlined }, i) => (
-                <motion.div key={i} variants={line} style={{ overflow: "hidden" }}>
-                  <span style={outlined ? { color: "#10B981", WebkitTextStroke: "2px #0A0A0B", paintOrder: "stroke fill" } : {}}>
+                <motion.div key={i} variants={flyUp} style={{ overflow: "hidden" }}>
+                  <span style={outlined ? { color: "#10B981", WebkitTextStroke: "1.5px #0A0A0B", paintOrder: "stroke fill" } : {}}>
                     {text}
                   </span>
                 </motion.div>
               ))}
             </h1>
 
-            {/* CTA */}
-            <motion.div variants={line} style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap", marginBottom: 48 }}>
-              <MagneticBtn style={{ background: "#0A0A0B", color: "white", border: "1.5px solid #10B981", padding: "14px 32px", borderRadius: 100, fontFamily: "'Bebas Neue', Impact, sans-serif", fontSize: 22, letterSpacing: "0.08em", display: "inline-flex", alignItems: "center", gap: 10, lineHeight: 1, boxShadow: "0 0 0 0 rgba(16,185,129,0.5)" }}>
-                <Zap size={16} strokeWidth={2.5} color="#10B981" />
+            {/* Sub-headline */}
+            <motion.p variants={flyUp} style={{ fontFamily: "'Geist', Inter, sans-serif", fontSize: "clamp(14px,1.3vw,17px)", lineHeight: 1.65, color: "#6B7280", margin: "0 0 28px", maxWidth: 420 }}>
+              The only card app with AI trained to get values right — every parallel, auto, and numbered card. Run your hobby or business from one platform.
+            </motion.p>
+
+            {/* CTAs */}
+            <motion.div variants={flyUp} style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", marginBottom: 44 }}>
+              <MagneticBtn style={{ background: "#0A0A0B", color: "white", border: "1.5px solid #10B981", padding: "14px 30px", borderRadius: 100, fontFamily: "'Bebas Neue', Impact, sans-serif", fontSize: 20, letterSpacing: "0.08em", display: "inline-flex", alignItems: "center", gap: 10, lineHeight: 1 }}>
+                <Zap size={15} strokeWidth={2.5} color="#10B981" />
                 TRY FREE →
               </MagneticBtn>
-              <a href="#demo" style={{ fontFamily: "'Bebas Neue', Impact, sans-serif", fontSize: 18, letterSpacing: "0.08em", color: "#6B7280", display: "inline-flex", alignItems: "center", gap: 6, textDecoration: "none" }}>
-                WATCH DEMO <ChevronDown size={16} />
+              <a href="#demo" style={{ fontFamily: "'Geist', Inter, sans-serif", fontSize: 14, fontWeight: 500, color: "#6B7280", display: "inline-flex", alignItems: "center", gap: 6, textDecoration: "none" }}>
+                Watch Demo
+                <ChevronDown size={15} />
               </a>
             </motion.div>
 
-            {/* Stats */}
-            <motion.div variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.08, delayChildren: 0.5 } } }}
-              className="cv-hero-stats" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
-              {STATS.map(({ value, label, color }) => (
-                <motion.div key={label} variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } } }}>
-                  <div style={{ fontFamily: "'Bebas Neue', Impact, sans-serif", fontSize: "clamp(1.8rem,3vw,2.6rem)", lineHeight: 1, color }}>{value}</div>
-                  <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 9, color: "#9CA3AF", letterSpacing: "0.12em", marginTop: 4, textTransform: "uppercase", lineHeight: 1.3 }}>{label}</div>
-                </motion.div>
+            {/* Animated stats */}
+            <motion.div ref={statsRef} variants={flyUp}
+              className="cv-hero-stats"
+              style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 0, borderTop: "1px solid rgba(0,0,0,0.07)", paddingTop: 24 }}>
+              {[
+                { display: statsVisible ? `${count14M}M+` : "0M+", label: "Cards Indexed", color: "#10B981" },
+                { display: statsVisible ? `${count13}` : "0",    label: "Power Tools",   color: "#F59E0B" },
+                { display: statsVisible ? `${count50K}K+` : "0K+",label: "Collectors",    color: "#8B5CF6" },
+                { display: "<5s",                                    label: "Live Card ID",  color: "#3B82F6" },
+              ].map(({ display, label, color }, i) => (
+                <div key={label} style={{ paddingRight: 16, borderRight: i < 3 ? "1px solid rgba(0,0,0,0.07)" : "none", paddingLeft: i > 0 ? 16 : 0 }}>
+                  <div style={{ fontFamily: "'Bebas Neue', Impact, sans-serif", fontSize: "clamp(1.6rem,2.6vw,2.4rem)", lineHeight: 1, color }}>{display}</div>
+                  <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: 9, color: "#9CA3AF", letterSpacing: "0.1em", marginTop: 5, textTransform: "uppercase", lineHeight: 1.3 }}>{label}</div>
+                </div>
+              ))}
+            </motion.div>
+
+            {/* Trust badges */}
+            <motion.div variants={flyUp} style={{ display: "flex", gap: 20, marginTop: 24, flexWrap: "wrap" }}>
+              {["No credit card required", "Free plan available", "Cancel anytime"].map(t => (
+                <span key={t} style={{ display: "inline-flex", alignItems: "center", gap: 5, fontFamily: "'Geist', Inter, sans-serif", fontSize: 11, color: "#9CA3AF", fontWeight: 500 }}>
+                  <span style={{ color: "#10B981", fontSize: 12, fontWeight: 900 }}>✓</span>
+                  {t}
+                </span>
               ))}
             </motion.div>
           </motion.div>
 
-          {/* RIGHT — Turntable */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.4 }}
-            style={{ position: "relative", width: "100%", height: 680, overflow: "hidden" }}>
+          {/* RIGHT — Turntable, fully transparent */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1, ease: EASE, delay: 0.3 }}
+            style={{ position: "relative", width: "100%", height: 660, overflow: "visible", background: "transparent" }}>
             <Turntable />
           </motion.div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Scroll cue */}
-      <motion.div animate={{ y: [0, 10, 0] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-        style={{ position: "absolute", bottom: 32, left: "50%", transform: "translateX(-50%)", display: "flex", flexDirection: "column", alignItems: "center", gap: 6, opacity: 0.4 }}>
-        <span style={{ fontFamily: "'Geist Mono', monospace", fontSize: 9, letterSpacing: "0.2em", color: "#0A0A0B" }}>SCROLL</span>
-        <ChevronDown size={16} color="#0A0A0B" />
+      <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+        style={{ position: "absolute", bottom: 28, left: "50%", transform: "translateX(-50%)", display: "flex", flexDirection: "column", alignItems: "center", gap: 5, opacity: 0.35, pointerEvents: "none" }}>
+        <span style={{ fontFamily: "'Geist Mono', monospace", fontSize: 8.5, letterSpacing: "0.22em", color: "#0A0A0B" }}>SCROLL</span>
+        <ChevronDown size={14} color="#0A0A0B" />
       </motion.div>
     </section>
   );
@@ -986,6 +1113,7 @@ export default function PremiumHero() {
       `}</style>
 
       <Navigation />
+      <SniperWidget />
       <HeroSection />
       <SniperSection />
       <FeaturesSection />
