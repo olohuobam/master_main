@@ -320,7 +320,7 @@ function Turntable() {
                 objectPosition: "center",
                 display: "block",
                 // drop-shadow only applies to actual image pixels — no box shadow
-                filter: "drop-shadow(0 8px 24px rgba(0,0,0,0.12))",
+                filter: "drop-shadow(0 8px 24px rgba(0,0,0,0.12))", mixBlendMode: "multiply" as React.CSSProperties["mixBlendMode"],
               }}
             />
           </div>
@@ -499,7 +499,7 @@ function HeroSection() {
           className="cv-hero-grid"
           style={{
             display: "grid",
-            gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1.3fr)",
+            gridTemplateColumns: "minmax(0, 1.1fr) minmax(0, 1.2fr)",
             gap: "clamp(24px, 3.5vw, 56px)",
             alignItems: "center",
             minHeight: "85vh",
@@ -529,7 +529,7 @@ function HeroSection() {
             {/* H1 */}
             <h1 style={{
               fontFamily: "var(--font-bebas-neue), Impact, sans-serif",
-              fontSize: "clamp(2.8rem, 5.2vw, 5.2rem)",
+              fontSize: "clamp(2.4rem, 4.4vw, 4.6rem)",
               lineHeight: 0.9,
               letterSpacing: "-0.01em",
               color: "#0A0A0B",
