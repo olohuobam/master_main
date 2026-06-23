@@ -278,15 +278,15 @@ function Turntable() {
       onMouseLeave={() => { pausedRef.current = false; }}
       style={{
         position: "relative",
-        width: "190%",
+        width: "140%",
         height: 640,
-        marginLeft: "-45%",
-        perspective: 1200,
+        marginLeft: "-5%",
+        perspective: 1100,
         perspectiveOrigin: "50% 46%",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "transparent",
+        background: "white",
       }}
     >
       <div
@@ -307,7 +307,7 @@ function Turntable() {
               top: 0, left: 0,
               width: 260, height: 380,
               backfaceVisibility: "hidden",
-              transform: `rotateY(${(360 / TOOLS.length) * i}deg) translateZ(480px)`,
+              transform: `rotateY(${(360 / TOOLS.length) * i}deg) translateZ(440px)`,
             }}
           >
             <img
@@ -529,7 +529,7 @@ function HeroSection() {
             {/* H1 */}
             <h1 style={{
               fontFamily: "var(--font-bebas-neue), Impact, sans-serif",
-              fontSize: "clamp(2.4rem, 4.4vw, 4.6rem)",
+              fontSize: "clamp(2.2rem, 4vw, 4.2rem)",
               lineHeight: 0.9,
               letterSpacing: "-0.01em",
               color: "#0A0A0B",
