@@ -278,6 +278,19 @@ function SniperWidget() {
   }, []);
 
   useEffect(() => {
+    const onScroll = () => {
+      // Hide widget when scrolled more than 90vh past hero
+      if (window.scrollY > window.innerHeight * 1.5) {
+        setVisible(false);
+      } else if (window.scrollY < window.innerHeight) {
+        setVisible(true);
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useEffect(() => {
     const id = setInterval(() => setMsgIdx(i => (i + 1) % SNIPER_MSGS.length), 3000);
     return () => clearInterval(id);
   }, []);
