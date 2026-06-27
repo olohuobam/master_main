@@ -239,14 +239,14 @@ function Turntable() {
     <div
       onMouseEnter={() => { pausedRef.current = true; }}
       onMouseLeave={() => { pausedRef.current = false; }}
-      style={{ position: "relative", width: "100%", height: "100%", perspective: 1100, perspectiveOrigin: "50% 46%", display: "flex", alignItems: "center", justifyContent: "center" }}
+      style={{ position: "relative", width: "100%", height: "100%", perspective: 900, perspectiveOrigin: "50% 46%", display: "flex", alignItems: "center", justifyContent: "center" }}
     >
       <div ref={stageRef} style={{ position: "relative", width: 240, height: 340, transformStyle: "preserve-3d", willChange: "transform" }}>
         {TOOLS.map((src, i) => (
           <div key={i} style={{
             position: "absolute", top: 0, left: 0, width: 240, height: 340,
             backfaceVisibility: "hidden",
-            transform: `rotateY(${(360 / TOOLS.length) * i}deg) translateZ(380px)`,
+            transform: `rotateY(${(360 / TOOLS.length) * i}deg) translateZ(320px)`,
           }}>
             <img src={src} alt="" style={{
               width: "100%", height: "100%", objectFit: "contain",
@@ -292,9 +292,9 @@ function SniperWidget() {
           transition={{ type: "spring", stiffness: 160, damping: 20 }}
           whileHover={{ scale: 1.06 }}
           style={{
-            position: "fixed", right: 20, top: "50%", marginTop: "-65px",
+            position: "fixed", right: 24, top: "50%", marginTop: "-64px",
             zIndex: 200, textDecoration: "none",
-            width: 128, height: 128, borderRadius: 20,
+            width: 122, height: 122, borderRadius: 18,
             background: "linear-gradient(145deg, #1C1C1F, #27272A)",
             border: "2px solid rgba(245,158,11,0.4)",
             display: "flex", flexDirection: "column",
