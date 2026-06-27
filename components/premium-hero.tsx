@@ -239,14 +239,14 @@ function Turntable() {
     <div
       onMouseEnter={() => { pausedRef.current = true; }}
       onMouseLeave={() => { pausedRef.current = false; }}
-      style={{ position: "relative", width: "100%", height: "100%", perspective: 1100, perspectiveOrigin: "50% 44%", display: "flex", alignItems: "center", justifyContent: "center" }}
+      style={{ position: "relative", width: "100%", height: "100%", perspective: 1100, perspectiveOrigin: "50% 46%", display: "flex", alignItems: "center", justifyContent: "center" }}
     >
       <div ref={stageRef} style={{ position: "relative", width: 240, height: 340, transformStyle: "preserve-3d", willChange: "transform" }}>
         {TOOLS.map((src, i) => (
           <div key={i} style={{
             position: "absolute", top: 0, left: 0, width: 240, height: 340,
             backfaceVisibility: "hidden",
-            transform: `rotateY(${(360 / TOOLS.length) * i}deg) translateZ(440px)`,
+            transform: `rotateY(${(360 / TOOLS.length) * i}deg) translateZ(380px)`,
           }}>
             <img src={src} alt="" style={{
               width: "100%", height: "100%", objectFit: "contain",
@@ -430,7 +430,7 @@ function Hero() {
       <div aria-hidden style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)", backgroundSize: "64px 64px", pointerEvents: "none" }} />
 
       <div className="cv-hero-inner" style={{ width: "100%", padding: "72px 6% 80px", position: "relative", zIndex: 2 }}>
-        <div className="cv-hero-grid" style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1.1fr)", gap: "clamp(32px, 4vw, 64px)", alignItems: "center", minHeight: "82vh" }}>
+        <div className="cv-hero-grid" style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.15fr) minmax(0, 0.85fr)", gap: "clamp(32px, 4vw, 64px)", alignItems: "center", minHeight: "82vh" }}>
 
           {/* LEFT — copy */}
           <div>
@@ -446,7 +446,7 @@ function Hero() {
 
             {/* Headline */}
             <div ref={headlineRef} style={{ overflow: "hidden" }}>
-              <h1 style={{ fontFamily: "var(--font-bebas-neue), Impact, sans-serif", fontSize: "clamp(3rem, 5.8vw, 6rem)", lineHeight: 0.88, letterSpacing: "-0.01em", color: "white", margin: "0 0 24px" }}>
+              <h1 style={{ fontFamily: "var(--font-bebas-neue), Impact, sans-serif", fontSize: "clamp(2.6rem, 4.8vw, 5rem)", lineHeight: 0.88, letterSpacing: "-0.01em", color: "white", margin: "0 0 24px" }}>
                 {[
                   { text: "SCAN. VALUE.", color: "white" },
                   { text: "SELL. PROFIT.", color: "white" },
